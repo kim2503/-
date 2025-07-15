@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나의 마음 들여다보기 - 감정 체크리스트</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .title {
+            color: #4a5568;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .question-container {
+            margin-bottom: 25px;
+            text-align: left;
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .question {
+            font-size: 16px;
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .emoji-options {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .emoji-btn {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .emoji-btn:hover {
+            transform: scale(1.1);
+            border-color: #667eea;
+        }
+
+        .emoji-btn.selected {
+            background: #667eea;
+            border-color: #667eea;
+            transform: scale(1.1);
+        }
+
+        .scale-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .scale-btn {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #4a5568;
+        }
+
+        .scale-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .scale-btn.selected {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            display: none;
+            background: #f0fff4;
+            border: 2px solid #68d391;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result-title {
+            color: #2f855a;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .result-text {
+            color: #2f855a;
+            line-height: 1.6;
+        }
+
+        .reset-btn {
+            background: #e2e8f0;
+            color: #4a5568;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: #cbd5e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🌟 나의 마음 들여다보기</h1>
+            <p class="subtitle">지금 이 순간, 내 마음은 어떤 상태일까요?<br>솔직하게 답해보세요. 정답은 없어요!</p>
+        </div>
+
+        <form id="emotionForm">
+            <!-- 질문 1 -->
+            <div class="question-container">
+                <div class="question">1. 지금 내 기분은 어떤가요?</div>
+                <div class="emoji-options">
+                    <button type="button" class="emoji-btn" data-question="1" data-value="매우좋음">😄</button>
+                    <button type="button" class="emoji-btn" data-question="1" data-value="좋음">😊</button>
+                    <button type="button" class="emoji-btn" data-question="1" data-value="보통">😐</button>
+                    <button type="button" class="emoji-btn" data-question="1" data-value="안좋음">😞</button>
+                    <button type="button" class="emoji-btn" data-question="1" data-value="매우안좋음">😢</button>
+                </div>
+            </div>
+
+            <!-- 질문 2 -->
+            <div class="question-container">
+                <div class="question">2. 오늘 하루 얼마나 힘들거나 스트레스를 받았나요?</div>
+                <div class="scale-options">
+                    <span style="font-size: 12px; color: #718096;">전혀 안힘듦</span>
+                    <button type="button" class="scale-btn" data-question="2" data-value="1">1</button>
+                    <button type="button" class="scale-btn" data-question="2" data-value="2">2</button>
+                    <button type="button" class="scale-btn" data-question="2" data-value="3">3</button>
+                    <button type="button" class="scale-btn" data-question="2" data-value="4">4</button>
+                    <button type="button" class="scale-btn" data-question="2" data-value="5">5</button>
+                    <span style="font-size: 12px; color: #718096;">매우 힘듦</span>
+                </div>
+            </div>
+
+            <!-- 질문 3 -->
+            <div class="question-container">
+                <div class="question">3. 지금 가장 강하게 느끼는 감정은 무엇인가요?</div>
+                <div class="emoji-options">
+                    <button type="button" class="emoji-btn" data-question="3" data-value="기쁨">😆</button>
+                    <button type="button" class="emoji-btn" data-question="3" data-value="화남">😠</button>
+                    <button type="button" class="emoji-btn" data-question="3" data-value="슬픔">😭</button>
+                    <button type="button" class="emoji-btn" data-question="3" data-value="불안">😰</button>
+                    <button type="button" class="emoji-btn" data-question="3" data-value="평온">😌</button>
+                </div>
+            </div>
+
+            <!-- 질문 4 -->
+            <div class="question-container">
+                <div class="question">4. 내 몸의 상태는 어떤가요? (피곤함, 에너지 등)</div>
+                <div class="emoji-options">
+                    <button type="button" class="emoji-btn" data-question="4" data-value="매우좋음">💪</button>
+                    <button type="button" class="emoji-btn" data-question="4" data-value="좋음">😊</button>
+                    <button type="button" class="emoji-btn" data-question="4" data-value="보통">😐</button>
+                    <button type="button" class="emoji-btn" data-question="4" data-value="피곤">😴</button>
+                    <button type="button" class="emoji-btn" data-question="4" data-value="매우피곤">🥱</button>
+                </div>
+            </div>
+
+            <!-- 질문 5 -->
+            <div class="question-container">
+                <div class="question">5. 다른 사람들과의 관계에서 어떤 기분인가요?</div>
+                <div class="emoji-options">
+                    <button type="button" class="emoji-btn" data-question="5" data-value="행복">🥰</button>
+                    <button type="button" class="emoji-btn" data-question="5" data-value="편안">😊</button>
+                    <button type="button" class="emoji-btn" data-question="5" data-value="보통">😐</button>
+                    <button type="button" class="emoji-btn" data-question="5" data-value="어색">😅</button>
+                    <button type="button" class="emoji-btn" data-question="5" data-value="외로움">😔</button>
+                </div>
+            </div>
+
+            <!-- 질문 6 -->
+            <div class="question-container">
+                <div class="question">6. 지금 내가 가장 필요로 하는 것은 무엇인가요?</div>
+                <div class="emoji-options">
+                    <button type="button" class="emoji-btn" data-question="6" data-value="휴식">😴</button>
+                    <button type="button" class="emoji-btn" data-question="6" data-value="대화">🗣️</button>
+                    <button type="button" class="emoji-btn" data-question="6" data-value="혼자시간">🧘</button>
+                    <button type="button" class="emoji-btn" data-question="6" data-value="재미">🎮</button>
+                    <button type="button" class="emoji-btn" data-question="6" data-value="포옹">🤗</button>
+                </div>
+            </div>
+
+            <!-- 질문 7 -->
+            <div class="question-container">
+                <div class="question">7. 오늘 나 자신에 대해 어떻게 생각하나요?</div>
+                <div class="scale-options">
+                    <span style="font-size: 12px; color: #718096;">별로</span>
+                    <button type="button" class="scale-btn" data-question="7" data-value="1">1</button>
+                    <button type="button" class="scale-btn" data-question="7" data-value="2">2</button>
+                    <button type="button" class="scale-btn" data-question="7" data-value="3">3</button>
+                    <button type="button" class="scale-btn" data-question="7" data-value="4">4</button>
+                    <button type="button" class="scale-btn" data-question="7" data-value="5">5</button>
+                    <span style="font-size: 12px; color: #718096;">정말 좋아</span>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn" disabled>내 감정 확인하기 ✨</button>
+        </form>
+
+        <div class="result" id="result">
+            <div class="result-title">🌈 당신의 마음 상태</div>
+            <div class="result-text" id="resultText"></div>
+            <button type="button" class="reset-btn" onclick="resetForm()">다시 체크하기</button>
+        </div>
+    </div>
+
+    <script>
+        const answers = {};
+        const buttons = document.querySelectorAll('.emoji-btn, .scale-btn');
+        const submitBtn = document.getElementById('submitBtn');
+        const form = document.getElementById('emotionForm');
+        const result = document.getElementById('result');
+        const resultText = document.getElementById('resultText');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const question = this.getAttribute('data-question');
+                const value = this.getAttribute('data-value');
+                
+                // 같은 질문의 다른 버튼들에서 selected 클래스 제거
+                const questionButtons = document.querySelectorAll(`[data-question="${question}"]`);
+                questionButtons.forEach(btn => btn.classList.remove('selected'));
+                
+                // 현재 버튼에 selected 클래스 추가
+                this.classList.add('selected');
+                
+                // 답변 저장
+                answers[question] = value;
+                
+                // 모든 질문에 답했는지 확인
+                if (Object.keys(answers).length === 7) {
+                    submitBtn.disabled = false;
+                }
+            });
+        });
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            showResult();
+        });
+
+        function showResult() {
+            const positiveCount = Object.values(answers).filter(answer => 
+                ['매우좋음', '좋음', '기쁨', '평온', '행복', '편안', '5', '4'].includes(answer)
+            ).length;
+
+            let message = '';
+            if (positiveCount >= 5) {
+                message = '정말 좋은 하루를 보내고 있네요! 😊 이런 긍정적인 마음가짐을 유지해보세요. 당신은 소중한 사람이에요!';
+            } else if (positiveCount >= 3) {
+                message = '오늘은 평범한 하루네요. 😌 괜찮아요, 모든 날이 완벽할 필요는 없어요. 작은 것에서도 기쁨을 찾아보세요!';
+            } else {
+                message = '조금 힘든 시간을 보내고 있는 것 같아요. 😔 괜찮아요, 이런 날도 있어요. 신뢰할 수 있는 어른이나 친구와 이야기해보는 것도 좋을 것 같아요.';
+            }
+
+            resultText.textContent = message;
+            form.style.display = 'none';
+            result.classList.add('show');
+        }
+
+        function resetForm() {
+            Object.keys(answers).forEach(key => delete answers[key]);
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            submitBtn.disabled = true;
+            form.style.display = 'block';
+            result.classList.remove('show');
+        }
+    </script>
+</body>
+</html>
